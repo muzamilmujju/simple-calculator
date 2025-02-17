@@ -1,45 +1,61 @@
 import tkinter as tk
 
-def press(num):
-    current = entry.get()
-    entry.delete(0, tk.END)
-    entry.insert(0, current + str(num))
+# Function to update the display
+def update_display(value):
+    current_text = display.get()
+    display.delete(0, tk.END)
+    display.insert(0, current_text + value)
 
-def clear():
-    entry.delete(0, tk.END)
+# Function to clear the display
+def clear_display():
+    display.delete(0, tk.END)
 
-def calculate():
+# Function to calculate the result
+def calculate_result():
     try:
-        result = eval(entry.get())
-        entry.delete(0, tk.END)
-        entry.insert(0, result)
-    except Exception:
-        entry.delete(0, tk.END)
-        entry.insert(0, "Error")
+        result = eval(display.get())
+        display.delete(0, tk.END)
+        display.insert(0, str(result))
+    except Exception as e:
+        display.delete(0, tk.END)
+        display.insert(0, "Error")
 
+# Create the main window
+root = tk.Tk()
+root.title("Simple Calculator")
+root.geometry("300x400")
+root.resizable(False, False)
 
-window = tk.Tk()
-window.title("Simple Calculator")
+# Create the display
+display = tk.Entry(root, font=("Arial", 20), justify="right", bd=10, relief=tk.RIDGE)
+display.grid(row=0, column=0, columnspan=4, pady=10)
 
-entry = tk.Entry(window, font=("Arial", 18), justify="right")
-entry.grid(row=0, column=0, columnspan=4)
-
+# Define buttons
 buttons = [
-    ("7", 1, 0), ("8", 1, 1), ("9", 1, 2), ("/", 1, 3),
-    ("4", 2, 0), ("5", 2, 1), ("6", 2, 2), ("*", 2, 3),
-    ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("-", 3, 3),
-    ("0", 4, 0), (".", 4, 1),  ("+", 4, 3)
+    ('7', 1, 0), ('8', 1, 1), ('9', 1, 2), ('/', 1, 3),
+    ('4', 2, 0), ('5', 2, 1), ('6', 2, 2), ('*', 2, 3),
+    ('1', 3, 0), ('2', 3, 1), ('3', 3, 2), ('-', 3, 3),
+    ('0', 4, 0), ('.', 4, 1), ('C', 4, 2), ('+', 4, 3),
+    ('=', 5, 0)
 ]
 
+# Add buttons to the window
 for (text, row, col) in buttons:
-    button = tk.Button(window, text=text, font=("Arial", 18), command=lambda t=text: press(t))
-    button.grid(row=row, column=col, padx=10, pady=10)
+    if text == '=':
+        button = tk.Button(root, text=text, font=("Arial", 16), bg="lightblue", fg="black", command=calculate_result)
+        button.grid(row=row, column=col, columnspan=4, sticky="nsew")
+    elif text == 'C':
+        button = tk.Button(root, text=text, font=("Arial", 16), bg="lightcoral", fg="black", command=clear_display)
+        button.grid(row=row, column=col, sticky="nsew")
+    else:
+        button = tk.Button(root, text=text, font=("Arial", 16), bg="lightgray", fg="black", command=lambda t=text: update_display(t))
+        button.grid(row=row, column=col, sticky="nsew")
 
+# Configure row and column weights
+for i in range(6):
+    root.grid_rowconfigure(i, weight=1)
+for j in range(4):
+    root.grid_columnconfigure(j, weight=1)
 
-clear_button = tk.Button(window, text="C", font=("Arial", 18), command=clear)
-clear_button.grid(row=5, column=0, columnspan=4)
-
-equal_button = tk.Button(window, text="=", font=("Arial", 18), command=calculate)
-equal_button.grid(row=6, column=0, columnspan=4)
-
-window.mainloop()
+# Run the application
+root.mainloop()
